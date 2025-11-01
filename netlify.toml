@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "npm run build && npx prisma generate"
   publish = ".next"
 
 [[plugins]]
@@ -7,10 +7,4 @@
 
 [build.environment]
   NODE_VERSION = "20"
-  PRISMA_GENERATE_DATAPROXY = "true"
-
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/___netlify-handler"
-  status = 200
 
