@@ -187,19 +187,19 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
     {
       id: 'engage',
       label: 'Engage Lead',
-      tone: 'primary',
+      tone: 'primary' as const,
       helperText: `Reference the pricing export from the ${primaryTouchpoint} touchpoint and confirm ${firstName}'s success criteria.`,
     },
     {
       id: 'assign',
       label: 'Assign Owner',
-      tone: 'secondary',
+      tone: 'secondary' as const,
       helperText: `Route the opportunity to the specialist covering ${industryDescriptor} to stay aligned with the ${roleDescriptor}.`,
     },
     {
       id: 'schedule',
       label: 'Schedule Outreach',
-      tone: 'secondary',
+      tone: 'secondary' as const,
       helperText: `Offer ${firstName} two 30-minute slots next week, aligning on outcomes ahead of the architecture review.`,
     },
   ]
