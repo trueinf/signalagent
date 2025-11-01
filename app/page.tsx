@@ -86,10 +86,6 @@ export default function Home() {
                 Sign in
               </button>
             </form>
-
-            <p className="text-xs text-[var(--text-secondary)]">
-              By signing in you acknowledge that Signal uses Microsoft Dynamics data, usage telemetry, and AI to deliver prioritisation and guidance.
-            </p>
           </div>
         </div>
       </div>
