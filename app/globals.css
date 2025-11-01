@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* IBM Carbon Design Tokens - Colors */
+  --color-blue-10: #edf5ff;
+  --color-blue-20: #d0e2ff;
+  --color-blue-30: #a6c8ff;
+  --color-blue-40: #78a9ff;
+  --color-blue-50: #4589ff;
+  --color-blue-60: #0f62fe;
+  --color-blue-70: #0043ce;
+  --color-blue-80: #002d9c;
+  --color-blue-90: #001d6c;
+  --color-blue-100: #001141;
+
+  --color-gray-10: #f4f4f4;
+  --color-gray-20: #e0e0e0;
+  --color-gray-30: #c6c6c6;
+  --color-gray-40: #a8a8a8;
+  --color-gray-50: #8d8d8d;
+  --color-gray-60: #6f6f6f;
+  --color-gray-70: #525252;
+  --color-gray-80: #393939;
+  --color-gray-90: #262626;
+  --color-gray-100: #161616;
+
+  --color-green-50: #24a148;
+  --color-green-60: #198038;
+  
+  --color-red-60: #da1e28;
+  
+  --color-yellow: #f1c21b;
+
+  --background-primary: #ffffff;
+  --background-secondary: #f4f4f4;
+  --background-hover: #e8e8e8;
+  --background-active: #c6c6c6;
+  
+  --text-primary: #161616;
+  --text-secondary: #525252;
+  --text-placeholder: #a8a8a8;
+  --text-on-color: #ffffff;
+  
+  --border-subtle: #e0e0e0;
+  --border-strong: #8d8d8d;
+  --border-interactive: #0f62fe;
+  
+  --link-primary: #0f62fe;
+  --link-primary-hover: #0043ce;
+  
+  /* Typography */
+  --font-sans: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  
+  /* Spacing */
+  --spacing-01: 0.125rem;
+  --spacing-02: 0.25rem;
+  --spacing-03: 0.5rem;
+  --spacing-04: 0.75rem;
+  --spacing-05: 1rem;
+  --spacing-06: 1.5rem;
+  --spacing-07: 2rem;
+  --spacing-08: 2.5rem;
+  --spacing-09: 3rem;
+  --spacing-10: 4rem;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background-color: var(--background-secondary);
+}
