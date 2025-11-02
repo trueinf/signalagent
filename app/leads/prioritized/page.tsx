@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { Lead } from '@prisma/client'
 import LeadCard from '@/components/LeadCard'
 import LeadFilters from '@/components/LeadFilters'
 import SidebarSummary from '@/components/SidebarSummary'
 import { Search, RefreshCw, Clock } from 'lucide-react'
+import { getFilteredLeads, getLeadStats } from '@/lib/data/leads'
 
 interface Stats {
   priority: {
@@ -18,9 +19,7 @@ interface Stats {
 }
 
 export default function PrioritizedLeadsPage() {
-  const [leads, setLeads] = useState<Lead[]>([])
-  const [stats, setStats] = useState<Stats | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [lastSynced, setLastSynced] = useState<string>('22 mins ago')
   const [searchQuery, setSearchQuery] = useState('')
   const [filters, setFilters] = useState({
     sourceType: 'ALL',
@@ -28,62 +27,22 @@ export default function PrioritizedLeadsPage() {
     buyerRole: 'ALL',
     age: 'ALL',
   })
-  const [lastSynced, setLastSynced] = useState<string>('22 mins ago')
   const router = useRouter()
 
-  const fetchLeads = useCallback(async () => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams()
-      if (filters.sourceType !== 'ALL') params.append('sourceType', filters.sourceType)
-      if (filters.industry !== 'ALL') params.append('industry', filters.industry)
-      if (filters.buyerRole !== 'ALL') params.append('buyerRole', filters.buyerRole)
-      if (searchQuery) params.append('search', searchQuery)
-
-      const [leadsRes, statsRes] = await Promise.all([
-        fetch(`/api/leads?${params.toString()}`),
-        fetch('/api/leads/stats'),
-      ])
-
-      if (!leadsRes.ok) {
-        console.error('Failed to fetch leads:', leadsRes.status, leadsRes.statusText)
-        setLeads([])
-      } else {
-        const leadsData = await leadsRes.json()
-        // Handle case where API might return error object instead of array
-        if (leadsData && Array.isArray(leadsData)) {
-          setLeads(leadsData)
-        } else if (leadsData?.error) {
-          console.error('API returned error:', leadsData.error)
-          setLeads([])
-        } else {
-          console.error('Unexpected API response format:', leadsData)
-          setLeads([])
-        }
-      }
-
-      if (!statsRes.ok) {
-        console.error('Failed to fetch stats:', statsRes.status)
-        setStats(null)
-      } else {
-        const statsData = await statsRes.json()
-        setStats(statsData)
-      }
-    } catch (error) {
-      console.error('Error fetching leads:', error)
-      setLeads([])
-      setStats(null)
-    } finally {
-      setLoading(false)
-    }
+  const leads = useMemo(() => {
+    return getFilteredLeads({
+      sourceType: filters.sourceType !== 'ALL' ? filters.sourceType : undefined,
+      industry: filters.industry !== 'ALL' ? filters.industry : undefined,
+      buyerRole: filters.buyerRole !== 'ALL' ? filters.buyerRole : undefined,
+      search: searchQuery || undefined,
+    })
   }, [filters, searchQuery])
 
-  useEffect(() => {
-    fetchLeads()
-  }, [fetchLeads])
+  const stats = useMemo(() => {
+    return getLeadStats()
+  }, [])
 
   const handleRefresh = () => {
-    fetchLeads()
     setLastSynced('Just now')
     setTimeout(() => setLastSynced('22 mins ago'), 1000)
   }
@@ -147,11 +106,7 @@ export default function PrioritizedLeadsPage() {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
           <div className="lg:col-span-3">
-            {loading ? (
-              <div className="text-center py-12 text-[var(--text-secondary)]">
-                Loading leads...
-              </div>
-            ) : leads.length === 0 ? (
+            {leads.length === 0 ? (
               <div className="text-center py-12 text-[var(--text-secondary)]">
                 No leads found matching your filters.
               </div>
