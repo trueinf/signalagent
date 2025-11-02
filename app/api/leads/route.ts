@@ -36,7 +36,6 @@ export async function GET(request: Request) {
       ],
     })
 
-    console.log(`API: Returning ${leads.length} leads`)
     return NextResponse.json(leads)
   } catch (error) {
     console.error('Error fetching leads:', error)

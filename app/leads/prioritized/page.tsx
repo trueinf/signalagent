@@ -47,13 +47,19 @@ export default function PrioritizedLeadsPage() {
 
       if (!leadsRes.ok) {
         console.error('Failed to fetch leads:', leadsRes.status, leadsRes.statusText)
-        const errorData = await leadsRes.json().catch(() => ({}))
-        console.error('Error details:', errorData)
         setLeads([])
       } else {
         const leadsData = await leadsRes.json()
-        console.log('Fetched leads:', leadsData.length, 'leads')
-        setLeads(Array.isArray(leadsData) ? leadsData : [])
+        // Handle case where API might return error object instead of array
+        if (leadsData && Array.isArray(leadsData)) {
+          setLeads(leadsData)
+        } else if (leadsData?.error) {
+          console.error('API returned error:', leadsData.error)
+          setLeads([])
+        } else {
+          console.error('Unexpected API response format:', leadsData)
+          setLeads([])
+        }
       }
 
       if (!statsRes.ok) {
