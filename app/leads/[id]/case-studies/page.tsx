@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, BookOpen, Sparkles } from 'lucide-react'
-import { prisma } from '@/lib/prisma'
+import { hardcodedLeads } from '@/lib/data/leads'
 
 interface LeadCaseStudiesPageProps {
   params: {
