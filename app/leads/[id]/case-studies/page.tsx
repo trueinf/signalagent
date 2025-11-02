@@ -4,9 +4,9 @@ import { ArrowLeft, BookOpen, Sparkles } from 'lucide-react'
 import { hardcodedLeads } from '@/lib/data/leads'
 
 interface LeadCaseStudiesPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 const formatEnumValue = (value: string | null | undefined) => {
@@ -19,9 +19,8 @@ const formatEnumValue = (value: string | null | undefined) => {
 }
 
 export default async function LeadCaseStudiesPage({ params }: LeadCaseStudiesPageProps) {
-  const lead = await prisma.lead.findUnique({
-    where: { id: params.id },
-  })
+  const { id } = await params
+  const lead = hardcodedLeads.find(l => l.id === id)
 
   if (!lead) {
     notFound()
