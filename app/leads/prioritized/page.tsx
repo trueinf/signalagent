@@ -45,11 +45,21 @@ export default function PrioritizedLeadsPage() {
         fetch('/api/leads/stats'),
       ])
 
-      const leadsData = await leadsRes.json()
-      const statsData = await statsRes.json()
+      if (!leadsRes.ok) {
+        console.error('Failed to fetch leads')
+        setLeads([])
+      } else {
+        const leadsData = await leadsRes.json()
+        setLeads(Array.isArray(leadsData) ? leadsData : [])
+      }
 
-      setLeads(leadsData)
-      setStats(statsData)
+      if (!statsRes.ok) {
+        console.error('Failed to fetch stats')
+        setStats(null)
+      } else {
+        const statsData = await statsRes.json()
+        setStats(statsData)
+      }
     } catch (error) {
       console.error('Error fetching leads:', error)
     } finally {

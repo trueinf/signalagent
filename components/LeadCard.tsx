@@ -21,7 +21,16 @@ export default function LeadCard({ lead, onEngage, onMoreDetails }: LeadCardProp
   }
 
   const colors = priorityColors[priority]
-  const signalTrail = lead.signalTrail ? JSON.parse(lead.signalTrail) : []
+  
+  let signalTrail: string[] = []
+  if (lead.signalTrail) {
+    try {
+      const parsed = JSON.parse(lead.signalTrail)
+      signalTrail = Array.isArray(parsed) ? parsed : []
+    } catch {
+      signalTrail = []
+    }
+  }
 
   const getSourceLabel = (sourceType: string | null) => {
     if (!sourceType) return lead.source || 'Unknown'
