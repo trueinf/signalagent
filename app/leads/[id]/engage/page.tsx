@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
+import { hardcodedLeads } from '@/lib/data/leads'
 import EngageSession from '@/components/lead-detail/EngageSession'
 
 const formatEnumValue = (value: string | null | undefined) => {
@@ -40,15 +40,14 @@ const inferCompanySector = (industry: string | null | undefined) => {
 }
 
 interface EngagePageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function EngagePage({ params }: EngagePageProps) {
-  const lead = await prisma.lead.findUnique({
-    where: { id: params.id },
-  })
+  const { id } = await params
+  const lead = hardcodedLeads.find(l => l.id === id)
 
   if (!lead) {
     notFound()
