@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, Clock } from 'lucide-react'
-import { prisma } from '@/lib/prisma'
+import { hardcodedLeads } from '@/lib/data/leads'
 import LeadWorkspace, { LeadWorkspaceProps } from '@/components/lead-detail/LeadWorkspace'
 
 interface LeadDetailPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 const priorityStyles = {
@@ -90,9 +90,8 @@ const inferCompanySector = (industry: string | null | undefined) => {
 }
 
 export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
-  const lead = await prisma.lead.findUnique({
-    where: { id: params.id },
-  })
+  const { id } = await params
+  const lead = hardcodedLeads.find(l => l.id === id)
 
   if (!lead) {
     notFound()
