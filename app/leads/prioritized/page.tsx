@@ -46,15 +46,18 @@ export default function PrioritizedLeadsPage() {
       ])
 
       if (!leadsRes.ok) {
-        console.error('Failed to fetch leads')
+        console.error('Failed to fetch leads:', leadsRes.status, leadsRes.statusText)
+        const errorData = await leadsRes.json().catch(() => ({}))
+        console.error('Error details:', errorData)
         setLeads([])
       } else {
         const leadsData = await leadsRes.json()
+        console.log('Fetched leads:', leadsData.length, 'leads')
         setLeads(Array.isArray(leadsData) ? leadsData : [])
       }
 
       if (!statsRes.ok) {
-        console.error('Failed to fetch stats')
+        console.error('Failed to fetch stats:', statsRes.status)
         setStats(null)
       } else {
         const statsData = await statsRes.json()
@@ -62,6 +65,8 @@ export default function PrioritizedLeadsPage() {
       }
     } catch (error) {
       console.error('Error fetching leads:', error)
+      setLeads([])
+      setStats(null)
     } finally {
       setLoading(false)
     }

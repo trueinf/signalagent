@@ -36,11 +36,12 @@ export async function GET(request: Request) {
       ],
     })
 
+    console.log(`API: Returning ${leads.length} leads`)
     return NextResponse.json(leads)
   } catch (error) {
     console.error('Error fetching leads:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch leads' },
+      { error: 'Failed to fetch leads', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }
