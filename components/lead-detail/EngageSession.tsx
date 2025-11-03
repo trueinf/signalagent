@@ -151,7 +151,7 @@ export default function EngageSession({
 
   const followUpDraft = useMemo(() => {
     const commitments = commitmentNotes.trim()
-    return `Hi ${lead.name.split(' ')[0]},\n\nGreat speaking today about the Azure Copilot evaluation. ${
+    return `Hi ${lead.name.split(' ')[0]},\n\nGreat speaking today about the Azure Signal evaluation. ${
       discoveryNotes
         ? `Here’s a quick recap of what we covered: ${discoveryNotes.trim()}\n\n`
         : ''

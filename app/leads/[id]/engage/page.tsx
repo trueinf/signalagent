@@ -59,7 +59,7 @@ export default async function EngagePage({ params }: EngagePageProps) {
   const buyerRoleValue = formatEnumValue(lead.buyerRole)
   const aiInsight =
     lead.aiInsight ||
-    `${lead.name.split(' ')[0] || lead.name} engaged with Azure Copilot content in the last day, signalling readiness to align on pilot scope.`
+    `${lead.name.split(' ')[0] || lead.name} engaged with Azure Signal content in the last day, signalling readiness to align on pilot scope.`
   const topSignal = lead.signalTrail ? JSON.parse(lead.signalTrail)[0] ?? 'Azure AI workload spiked in the trial environment' : 'Azure AI workload spiked in the trial environment'
 
   const companySize = inferCompanySize(lead.industry)
@@ -78,7 +78,7 @@ export default async function EngagePage({ params }: EngagePageProps) {
       'Agree on next steps, stakeholders, and technical checkpoints for the trial.',
     ],
     discovery: [
-      'What success metrics are you targeting for this Copilot pilot?',
+      'What success metrics are you targeting for this Signal pilot?',
       `Which parts of the ${roleDescriptor} will be involved in evaluation and approval?`,
       'What timeline are you working against for deployment or proof of value?',
     ],
@@ -87,7 +87,7 @@ export default async function EngagePage({ params }: EngagePageProps) {
 
   const objectionResponses = [
     {
-      objection: '“Azure Copilot seems expensive for our team size.”',
+      objection: '“Azure Signal seems expensive for our team size.”',
       response: `Totally understand. When ${lead.company || 'Contoso Finance'} modelled the hybrid benefit scenario, they identified a 32% cost reduction versus legacy tooling in the first 60 days.`,
       proofPoint: 'Share the hybrid benefit calculator and the finance one-pager.',
     },
@@ -99,7 +99,7 @@ export default async function EngagePage({ params }: EngagePageProps) {
   ]
 
   const emailTemplate = {
-    subject: `Recap & next step on Azure Copilot for ${lead.company || 'your team'}`,
+    subject: `Recap & next step on Azure Signal for ${lead.company || 'your team'}`,
     preview: `${firstName}, following up with the architecture review invite and proof points we discussed.`,
     bodyPoints: [
       'Summarise the scenario they modelled and key success metrics shared.',

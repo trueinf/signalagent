@@ -1,7 +1,17 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Clock } from 'lucide-react'
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Clock,
+  Clock3,
+  Compass,
+  Medal,
+  Rocket,
+  Sparkles,
+} from 'lucide-react'
 import { hardcodedLeads } from '@/lib/data/leads'
+import { leadEnhancements, type WorkReadyStatus } from '@/lib/data/leadEnhancements'
 import LeadWorkspace, { LeadWorkspaceProps } from '@/components/lead-detail/LeadWorkspace'
 
 interface LeadDetailPageProps {
@@ -18,10 +28,39 @@ const priorityStyles = {
 
 const sourceLabels: Record<string, string> = {
   TRIAL: 'Azure Trial',
-  WEBINAR: 'Copilot Webinar',
+  WEBINAR: 'Signal Webinar',
   CAMPAIGN_DOWNLOAD: 'Campaign Download',
   SQL: 'SQL (Field referral)',
   CAMPAIGN_EMAIL: 'Campaign Email',
+}
+
+type CtaVariant = 'top-pick' | 'engage' | 'plan'
+
+function getWorkReadyConfig(status: WorkReadyStatus) {
+  if (status === 'work-ready') {
+    return {
+      label: 'Work-Ready',
+      Icon: CheckCircle2,
+      classes: 'border-green-200 bg-green-50 text-green-700',
+    }
+  }
+
+  return {
+    label: 'Review First',
+    Icon: Clock3,
+    classes: 'border-amber-200 bg-amber-50 text-amber-700',
+  }
+}
+
+function getCtaConfig(variant: CtaVariant) {
+  switch (variant) {
+    case 'top-pick':
+      return { label: 'Top Pick: Start Now', Icon: Medal }
+    case 'plan':
+      return { label: 'Plan Outreach', Icon: Compass }
+    default:
+      return { label: 'Engage Lead', Icon: Rocket }
+  }
 }
 
 const formatEnumValue = (value: string | null | undefined) => {
@@ -97,9 +136,32 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
     notFound()
   }
 
+  const sortedLeads = [...hardcodedLeads].sort((a, b) => {
+    const scoreA = a.intentScore ?? 0
+    const scoreB = b.intentScore ?? 0
+    if (scoreA !== scoreB) {
+      return scoreB - scoreA
+    }
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  })
+  const rankIndex = sortedLeads.findIndex(item => item.id === lead.id)
+  const rank = rankIndex >= 0 ? rankIndex + 1 : null
+  const enhancement = leadEnhancements[lead.id]
+
   const intentScore = lead.intentScore ?? 0
   const priority = intentScore >= 85 ? 'high' : intentScore >= 70 ? 'medium' : 'low'
   const priorityBadge = priorityStyles[priority as keyof typeof priorityStyles]
+  const displayRank = rank ?? '?'
+  const rankLabel = enhancement?.rankContext
+    ? `Ranked #${displayRank} – ${enhancement.rankContext}`
+    : `Ranked #${displayRank} Today`
+  const workReadyStatus: WorkReadyStatus = enhancement?.workReadyStatus ?? 'review-first'
+  const { label: workReadyLabel, Icon: WorkReadyIcon, classes: workReadyClasses } = getWorkReadyConfig(workReadyStatus)
+  const workReadyReason = enhancement?.workReadyReason
+  const signalTiming = enhancement?.signalTiming
+  const similarWinsSummary = enhancement?.similarWins?.summary
+  const ctaVariant: CtaVariant = rank === 1 ? 'top-pick' : priority === 'low' ? 'plan' : 'engage'
+  const { label: ctaLabel, Icon: CtaIcon } = getCtaConfig(ctaVariant)
   const signalTrail: string[] = lead.signalTrail ? JSON.parse(lead.signalTrail) : []
   const lastSynced = formatDateTime(lead.lastSyncedAt)
   const firstName = lead.name.split(' ')[0] || lead.name
@@ -125,10 +187,10 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
       description: `${firstName} downloaded the hybrid benefit worksheet after exploring pricing guidance from the ${primaryTouchpoint} touchpoint.`,
     },
     {
-      title: 'Opened nurture email: "Activate Azure AI Copilot"',
+      title: 'Opened nurture email: "Activate Azure AI Signal"',
       timestamp: subtractMs(referenceTimestamp, 18 * 60 * 60 * 1000),
       channel: 'email',
-      description: `${firstName} clicked through to the Copilot customer story and reviewed the adoption steps for four minutes.`,
+      description: `${firstName} clicked through to the Signal customer story and reviewed the adoption steps for four minutes.`,
     },
     {
       title: 'Dynamics 365 note logged by field seller',
@@ -154,10 +216,10 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
       nextStep: `Attach the most relevant case study and highlight outcomes comparable to ${companyName}.`,
     },
     {
-      title: 'Capture decision timeline in Dynamics 365',
+      title: 'Lock the buying path in your call notes',
       impact: 'medium',
-      summary: `Lead status is ${statusLabel}. Document milestones so hand-offs remain tight across marketing, inside sales, and the field team.`,
-      nextStep: `Log budget guardrails, target launch dates, and stakeholders before ${syncReference}.`,
+      summary: `Lead status is ${statusLabel}. Make sure you know who approves budget and timing before your next touch.`,
+      nextStep: `Jot down budget guardrails, target launch window, and the decision-maker directly in this workspace before your next outreach.`,
     },
   ]
 
@@ -170,7 +232,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
     {
       customer: 'Northwind Traders',
       summary: 'Converted webinar attendee with role-aligned talk track.',
-      proofPoint: 'CFO signed off after sharing Copilot ROI benchmarks.',
+      proofPoint: 'CFO signed off after sharing Signal ROI benchmarks.',
     },
   ]
 
@@ -185,7 +247,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
   const quickActions = [
     {
       id: 'engage',
-      label: 'Engage Lead',
+      label: ctaLabel,
       tone: 'primary' as const,
       helperText: `Reference the pricing export from the ${primaryTouchpoint} touchpoint and confirm ${firstName}'s success criteria.`,
     },
@@ -213,13 +275,13 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
     discovery: [
       'What prompted the cost analysis today versus earlier in the evaluation?',
       `How is the ${roleDescriptor} measuring success for this pilot?`,
-      'Who else should weigh in before you green-light the Azure Copilot rollout?',
+      'Who else should weigh in before you green-light the Azure Signal rollout?',
     ],
     closing: `If we align on the success criteria, I can bring our Azure AI architect to a 30-minute design review next week. Does Tuesday or Wednesday afternoon work?`,
   }
 
   const emailTemplate = {
-    subject: `Next step on Azure Copilot evaluation for ${companyName}`,
+    subject: `Next step on Azure Signal evaluation for ${companyName}`,
     preview: `${firstName}, looping back with the architecture review slots we discussed.`,
     bodyPoints: [
       `Recapped the ${primaryTouchpoint.toLowerCase()} session and pricing export from earlier today.`,
@@ -231,8 +293,8 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
 
   const objectionResponses = [
     {
-      objection: '“Azure Copilot seems expensive for our team size.”',
-      response: `Understood. When ${companyName} modelled the hybrid benefit scenario, the cost dropped by 32%, aligning with how Contoso Finance rolled out Copilot to a leaner workforce.`,
+      objection: '“Azure Signal seems expensive for our team size.”',
+      response: `Understood. When ${companyName} modelled the hybrid benefit scenario, the cost dropped by 32%, aligning with how Contoso Finance rolled out Signal to a leaner workforce.`,
       proofPoint: 'Sharing the cost benchmark sheet the CFO used to approve their pilot.',
     },
     {
@@ -257,7 +319,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
 
   const learningFeed = [
     {
-      title: 'Copilot Pricing ROI narrative resonated with CFOs',
+      title: 'Signal Pricing ROI narrative resonated with CFOs',
       description: 'Teams closing in under 30 days led with the hybrid benefit worksheet and quantified savings in the first call.',
       tag: 'Playbook insight',
     },
@@ -269,7 +331,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
   ]
 
   const postCall = {
-    prompt: `Summarize key takeaways, blockers, and commitments from your conversation with ${firstName}. Copilot will use this to tune prioritization and messaging.`,
+    prompt: `Summarize key takeaways, blockers, and commitments from your conversation with ${firstName}. Signal will use this to tune prioritization and messaging.`,
     outcomeOptions: ['Advanced to technical review', 'Stalled – budget review', 'Disqualified – poor fit', 'No response'],
     tags: ['Pricing', 'Deployment', 'Security', 'Timeline', 'Success Criteria'],
   }
@@ -304,7 +366,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
     insight: {
       whyNow:
         lead.aiInsight ||
-        `${firstName} engaged heavily with Azure Copilot content in the last 24 hours, signalling a readiness to scope pilots.`,
+        `${firstName} engaged heavily with Azure Signal content in the last 24 hours, signalling a readiness to scope pilots.`,
       topSignal,
       signalTrail,
       similarWins,
@@ -323,6 +385,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
       sourceLabel: primaryTouchpoint,
       syncReference,
     },
+    enhancement,
   }
 
   const { insight, heroMetrics } = workspaceProps
@@ -345,35 +408,75 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
             </div>
           </div>
 
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
+          <div className="grid gap-6 lg:grid-cols-[2fr,1fr]">
+            <div className="space-y-4">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-blue-10)]">
+                <Sparkles className="h-3 w-3" />
+                {rankLabel}
+              </span>
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-3xl font-semibold">{lead.company || 'Unknown Company'}</h1>
                 <span className={`px-3 py-1 rounded-full text-sm font-semibold ${priorityBadge}`}>
                   {priority.toUpperCase()} PRIORITY
                 </span>
-                <span className="text-sm text-[var(--color-blue-20)]">
-                  Intent score calculated from AI signal trail insights
+              </div>
+              <p className="text-lg text-[var(--color-blue-20)]">
+                {lead.name}
+                {lead.contactTitle ? ` — ${lead.contactTitle}` : ''}
+              </p>
+              <div className="flex flex-wrap items-center gap-3 text-sm">
+                <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 font-semibold ${workReadyClasses}`}>
+                  <WorkReadyIcon className="h-4 w-4" />
+                  {workReadyLabel}
+                </span>
+                <span className="text-[var(--color-blue-20)]">
+                  Log updates before {heroMetrics.syncReference}.
                 </span>
               </div>
-              <div>
-                <h1 className="text-3xl font-semibold">{lead.company || 'Unknown Company'}</h1>
-                <p className="text-lg text-[var(--color-blue-20)]">
-                  {lead.name}
-                  {lead.contactTitle ? ` — ${lead.contactTitle}` : ''}
-                </p>
-              </div>
+              {workReadyReason && (
+                <p className="text-sm text-[var(--color-blue-10)]">{workReadyReason}</p>
+              )}
+              {similarWinsSummary && (
+                <p className="text-sm text-[var(--color-blue-10)]">{similarWinsSummary}</p>
+              )}
+              {signalTiming && (
+                <div className="text-xs text-[var(--color-blue-20)] space-y-1">
+                  <div>{signalTiming.event}</div>
+                  {signalTiming.decayWarning && <div>{signalTiming.decayWarning}</div>}
+                </div>
+              )}
             </div>
 
-            <div className="flex items-center gap-4 bg-white/10 rounded-lg px-6 py-4">
-              <div className="text-sm uppercase tracking-wide text-[var(--color-blue-20)]">Intent Score</div>
-              <div className="text-4xl font-semibold">{intentScore}</div>
-              <div className="text-sm text-[var(--color-blue-20)]">/ 100</div>
+            <div className="rounded-lg bg-white/10 p-6 space-y-5">
+              <div className="flex items-baseline gap-3">
+                <div className="text-sm uppercase tracking-wide text-[var(--color-blue-20)]">Intent score</div>
+                <div className="text-4xl font-semibold">{intentScore}</div>
+                <div className="text-sm text-[var(--color-blue-20)]">/ 100</div>
+              </div>
+              <Link
+                href={`/leads/${lead.id}/engage`}
+                className="inline-flex items-center justify-center gap-2 rounded bg-white px-4 py-3 text-sm font-semibold text-[var(--color-blue-90)] shadow-sm transition hover:bg-[var(--color-blue-20)]/30"
+              >
+                <CtaIcon className="h-4 w-4" />
+                {ctaLabel}
+              </Link>
+              <div className="grid gap-2 text-sm text-[var(--color-blue-20)]">
+                <div>
+                  <span className="text-white font-semibold">Lead status:</span> {statusLabel}
+                </div>
+                <div>
+                  <span className="text-white font-semibold">Source:</span> {primaryTouchpoint}
+                </div>
+                <div>
+                  <span className="text-white font-semibold">Synced:</span> {lastSynced}
+                </div>
+              </div>
             </div>
           </div>
 
           <div className="grid gap-4 lg:grid-cols-[2fr,1fr]">
             <div className="bg-white/10 rounded-lg p-5 space-y-3">
-              <div className="text-sm uppercase tracking-wide text-[var(--color-blue-20)]">Why now</div>
+              <div className="text-sm uppercase tracking-wide text-[var(--color-blue-20)]">AI briefing</div>
               <p className="text-base leading-relaxed text-white">
                 {insight.whyNow}
               </p>

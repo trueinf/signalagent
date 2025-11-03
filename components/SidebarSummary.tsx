@@ -18,7 +18,7 @@ export default function SidebarSummary({ stats }: SidebarSummaryProps) {
 
   const sourceLabels: Record<string, string> = {
     TRIAL: 'Azure Trials',
-    WEBINAR: 'Copilot Webinars',
+    WEBINAR: 'Signal Webinars',
     SQL: 'SQL (Field referrals)',
     CAMPAIGN_DOWNLOAD: 'Campaign Downloads',
     CAMPAIGN_EMAIL: 'Campaign Emails',

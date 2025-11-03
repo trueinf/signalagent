@@ -71,7 +71,7 @@ const keywordSuggestions = [
   { keyword: 'budget', message: 'Lead with the ROI calculator and loyalty incentive framing.' },
   { keyword: 'usage', message: 'Offer the adoption sprint plan and champion workshop to recover usage.' },
   { keyword: 'security', message: 'Share the remediation playbook and align FastTrack security resources.' },
-  { keyword: 'priority', message: 'Tie Copilot to existing OKRs with a 30-day pilot to maintain momentum.' },
+  { keyword: 'priority', message: 'Tie Signal to existing OKRs with a 30-day pilot to maintain momentum.' },
 ]
 
 export default function ObjectionWorkspace(props: ObjectionWorkspaceProps) {

@@ -88,8 +88,8 @@ export const highlights: InsightHighlight[] = [
 
 export const telemetryCards: TelemetryCard[] = [
   {
-    id: 'copilot-usage',
-    title: 'Copilot usage prompts/day',
+    id: 'signal-usage',
+    title: 'Signal usage prompts/day',
     metric: '6,200',
     change: '+14% vs. last week',
     commentary: 'Usage lift correlates with adoption sprint play and FastTrack workshops.',
@@ -122,7 +122,7 @@ export const enablementTasks: EnablementTask[] = [
   {
     id: 'security-brief',
     title: 'Update security assurance brief',
-    description: 'Include new Copilot compliance posture and remediation case study.',
+    description: 'Include new Signal compliance posture and remediation case study.',
     owner: 'Product Marketing',
     due: 'Due in 7 days',
     status: 'Planned',

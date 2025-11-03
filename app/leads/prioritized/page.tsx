@@ -7,7 +7,9 @@ import LeadCard from '@/components/LeadCard'
 import LeadFilters from '@/components/LeadFilters'
 import SidebarSummary from '@/components/SidebarSummary'
 import { Search, RefreshCw, Clock } from 'lucide-react'
-import { getFilteredLeads, getLeadStats } from '@/lib/data/leads'
+import { getFilteredLeads, getLeadStats, hardcodedLeads } from '@/lib/data/leads'
+import { leadEnhancements } from '@/lib/data/leadEnhancements'
+import SimilarWinsPanel from '@/components/SimilarWinsPanel'
 
 interface Stats {
   priority: {
@@ -27,6 +29,7 @@ export default function PrioritizedLeadsPage() {
     buyerRole: 'ALL',
     age: 'ALL',
   })
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null)
   const router = useRouter()
 
   const leads = useMemo(() => {
@@ -51,9 +54,28 @@ export default function PrioritizedLeadsPage() {
     console.log('Engage lead:', leadId)
   }
 
+  const handleViewSimilarWins = (leadId: string) => {
+    setSelectedLeadId(leadId)
+  }
+
   const handleMoreDetails = (leadId: string) => {
     router.push(`/leads/${leadId}`)
   }
+
+  const handleCloseSimilarWins = () => {
+    setSelectedLeadId(null)
+  }
+
+  const selectedLead = useMemo(() => {
+    if (!selectedLeadId) return null
+    return (
+      leads.find((lead) => lead.id === selectedLeadId) ||
+      hardcodedLeads.find((lead) => lead.id === selectedLeadId) ||
+      null
+    )
+  }, [selectedLeadId, leads])
+
+  const selectedEnhancement = selectedLeadId ? leadEnhancements[selectedLeadId] : undefined
 
   return (
     <div className="min-h-screen bg-[var(--background-secondary)]">
@@ -112,12 +134,15 @@ export default function PrioritizedLeadsPage() {
               </div>
             ) : (
               <div className="space-y-0">
-                {leads.map((lead) => (
+                {leads.map((lead, index) => (
                   <LeadCard
                     key={lead.id}
                     lead={lead}
+                    rank={index + 1}
+                    enhancement={leadEnhancements[lead.id]}
                     onEngage={handleEngage}
                     onMoreDetails={handleMoreDetails}
+                    onViewSimilarWins={handleViewSimilarWins}
                   />
                 ))}
               </div>
@@ -129,6 +154,12 @@ export default function PrioritizedLeadsPage() {
           </div>
         </div>
       </div>
+      <SimilarWinsPanel
+        open={Boolean(selectedLeadId)}
+        lead={selectedLead}
+        detail={selectedEnhancement?.similarWins?.detail}
+        onClose={handleCloseSimilarWins}
+      />
     </div>
   )
 }

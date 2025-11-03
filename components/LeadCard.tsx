@@ -1,155 +1,248 @@
 'use client'
 
 import { Lead } from '@prisma/client'
-import { BrainCircuit, Flame, Lightbulb, Zap } from 'lucide-react'
-import { ArrowRight, ExternalLink } from 'lucide-react'
+import {
+  BrainCircuit,
+  CheckCircle2,
+  Clock3,
+  Compass,
+  ExternalLink,
+  Lightbulb,
+  Link2,
+  Medal,
+  Radar,
+  Rocket,
+  ShieldAlert,
+  Sparkle,
+  Zap,
+} from 'lucide-react'
+import type { LeadEnhancement, SignalTiming, TagGroup, WorkReadyStatus } from '@/lib/data/leadEnhancements'
 
 interface LeadCardProps {
   lead: Lead
+  rank: number
+  enhancement?: LeadEnhancement
   onEngage?: (leadId: string) => void
   onMoreDetails?: (leadId: string) => void
+  onViewSimilarWins?: (leadId: string) => void
 }
 
-export default function LeadCard({ lead, onEngage, onMoreDetails }: LeadCardProps) {
+type CtaVariant = 'top-pick' | 'engage' | 'plan'
+
+export default function LeadCard({
+  lead,
+  rank,
+  enhancement,
+  onEngage,
+  onMoreDetails,
+  onViewSimilarWins,
+}: LeadCardProps) {
   const intentScore = lead.intentScore ?? 0
   const priority = intentScore >= 85 ? 'high' : intentScore >= 70 ? 'medium' : 'low'
-  
+
   const priorityColors = {
     high: { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
     medium: { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200' },
     low: { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200' },
   }
 
-  const colors = priorityColors[priority]
-  
-  let signalTrail: string[] = []
-  if (lead.signalTrail) {
-    try {
-      const parsed = JSON.parse(lead.signalTrail)
-      signalTrail = Array.isArray(parsed) ? parsed : []
-    } catch {
-      signalTrail = []
-    }
-  }
+  const colors = priorityColors[priority as keyof typeof priorityColors]
 
-  const getSourceLabel = (sourceType: string | null) => {
-    if (!sourceType) return lead.source || 'Unknown'
-    const labels: Record<string, string> = {
-      TRIAL: 'Azure Trial',
-      WEBINAR: 'Copilot Webinar',
-      CAMPAIGN_DOWNLOAD: 'Campaign Download',
-      SQL: 'SQL (Field referral)',
-      CAMPAIGN_EMAIL: 'Campaign Email',
-    }
-    return labels[sourceType] || sourceType
-  }
-
+  const signalTrail = parseSignalTrail(lead.signalTrail)
+  const scoreDrivers = enhancement?.scoreDrivers ?? []
   const signalFreshness = computeSignalFreshness(lead.updatedAt)
+  const signalTiming = enhancement?.signalTiming
   const prepCompleteness = computePrepCompleteness(lead)
   const aiConfidence = intentScore >= 85 ? 'High confidence' : intentScore >= 70 ? 'Good confidence' : 'Emerging signals'
+  const tagGroups = enhancement?.tagGroups ?? []
+  const similarWins = enhancement?.similarWins
 
-  const similarWins = buildSimilarWins(lead)
+  const rankLabel = enhancement?.rankContext
+    ? `Ranked #${rank} - ${enhancement.rankContext}`
+    : `Ranked #${rank} Today`
+
+  const workReadyStatus = enhancement?.workReadyStatus ?? 'review-first'
+  const workReadyConfig = getWorkReadyConfig(workReadyStatus)
+  const { label: workReadyLabel, classes: workReadyClasses, Icon: WorkReadyIcon } = workReadyConfig
+  const workReadyReason = enhancement?.workReadyReason
+
+  const ctaVariant: CtaVariant = rank === 1 ? 'top-pick' : priority === 'low' ? 'plan' : 'engage'
+  const { label: ctaLabel, Icon: CtaIcon } = getCtaConfig(ctaVariant)
 
   return (
     <div
-      className={`bg-white border-l-4 ${colors.border} rounded p-4 mb-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
+      className={`group bg-white border-l-4 ${colors.border} rounded-xl p-5 mb-4 shadow-sm transition-shadow hover:shadow-md cursor-pointer`}
       onClick={() => onMoreDetails?.(lead.id)}
     >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-lg font-semibold text-[var(--text-primary)]">
-              {lead.company || 'Unknown Company'}
-            </h3>
-            <span className={`px-2 py-0.5 rounded text-base font-medium ${colors.bg} ${colors.text}`}>
-              {priority.toUpperCase()}
-            </span>
+      <div className="flex flex-col gap-5">
+        <header className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="flex flex-col gap-2">
+              <span className="inline-flex items-center rounded-full bg-[var(--color-blue-10)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-blue-80)]">
+                {rankLabel}
+              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                  {lead.company || 'Unknown Company'}
+                </h3>
+                <span className={`px-2 py-0.5 rounded text-sm font-medium ${colors.bg} ${colors.text}`}>
+                  {priority.toUpperCase()}
+                </span>
+              </div>
+              <span className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-sm font-medium ${workReadyClasses}`}>
+                <WorkReadyIcon className="h-4 w-4" />
+                {workReadyLabel}
+              </span>
+              <p className="text-base text-[var(--text-secondary)]">
+                {lead.name}
+                {lead.contactTitle && ` – ${lead.contactTitle}`}
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-3xl font-bold text-[var(--text-primary)]">{intentScore}</div>
+              <div className="text-xs uppercase tracking-wide text-[var(--text-secondary)]">Intent Score</div>
+            </div>
           </div>
-          <p className="text-base text-[var(--text-secondary)]">
-            {lead.name}
-            {lead.contactTitle && ` – ${lead.contactTitle}`}
-          </p>
-        </div>
-        <div className="text-right">
-          <div className="text-2xl font-bold text-[var(--text-primary)]">{intentScore}</div>
-          <div className="text-xs text-[var(--text-secondary)]">/ 100</div>
-        </div>
-      </div>
+          {workReadyReason && (
+            <p className="text-sm text-[var(--text-secondary)]">{workReadyReason}</p>
+          )}
+        </header>
 
-      <div className="mb-3">
-        <p className="text-base text-[var(--text-secondary)] mb-1">
-          <span className="font-medium">Source:</span> {getSourceLabel(lead.sourceType)}
-        </p>
-        {signalTrail.length > 0 && (
-          <div className="mt-2">
-            <p className="text-base font-medium text-[var(--text-secondary)] mb-1">Signal Trail:</p>
-            <ul className="list-disc list-inside text-base text-[var(--text-secondary)] space-y-1">
-              {signalTrail.map((signal: string, idx: number) => (
-                <li key={idx}>&ldquo;{signal}&rdquo;</li>
+        {scoreDrivers.length > 0 && (
+          <section className="rounded-xl border border-[var(--border-subtle)]/70 bg-[var(--color-blue-10)]/40 p-4">
+            <div className="text-xs uppercase tracking-wide text-[var(--text-secondary)] font-semibold">
+              Score Breakdown
+            </div>
+            <div className="mt-3 space-y-2">
+              {scoreDrivers.map((driver, idx) => (
+                <div key={`${driver.label}-${idx}`} className="flex flex-col gap-1 md:flex-row md:items-baseline md:justify-between">
+                  <div className="text-sm font-medium text-[var(--text-primary)]">{driver.label}</div>
+                  <div className={`text-sm font-semibold ${driver.delta >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {formatDriverDelta(driver.delta)}
+                  </div>
+                  {driver.context && (
+                    <div className="text-xs text-[var(--text-secondary)] md:ml-auto">{driver.context}</div>
+                  )}
+                </div>
               ))}
-            </ul>
-          </div>
+            </div>
+          </section>
         )}
-      </div>
 
-      <ReadinessScorecard
-        signalFreshness={signalFreshness}
-        aiConfidence={aiConfidence}
-        prepCompleteness={prepCompleteness}
-      />
+        <section className="space-y-3 text-base text-[var(--text-secondary)]">
+          <p>
+            <span className="font-medium">Source:</span> {getSourceLabel(lead.sourceType, lead.source)}
+          </p>
+          {signalTrail.length > 0 && (
+            <div>
+              <p className="text-base font-medium text-[var(--text-secondary)] mb-1">Signal Trail:</p>
+              <ul className="list-disc list-inside space-y-1">
+                {signalTrail.map((signal, idx) => (
+                  <li key={idx}>&ldquo;{signal}&rdquo;</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
 
-      {similarWins.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-2">
-          {similarWins.map((win) => (
-            <span
-              key={win.id}
-              className="inline-flex items-center gap-2 rounded-full border border-[var(--color-blue-20)]/50 bg-[var(--color-blue-10)] px-3 py-1 text-xs font-medium text-[var(--color-blue-80)]"
-            >
-              <Flame className="h-3 w-3" />
-              {win.label}
-            </span>
-          ))}
-        </div>
-      )}
+        <ReadinessScorecard
+          signalFreshness={signalFreshness}
+          signalTiming={signalTiming}
+          aiConfidence={aiConfidence}
+          prepCompleteness={prepCompleteness}
+        />
 
-      {lead.aiInsight && (
-        <div className="mb-3 p-2 bg-[var(--color-blue-10)] rounded">
-          <p className="text-base font-medium text-[var(--text-primary)] mb-1">AI Insight Summary:</p>
-          <p className="text-base text-[var(--text-secondary)] italic">&ldquo;{lead.aiInsight}&rdquo;</p>
-        </div>
-      )}
+        {lead.aiInsight && (
+          <section className="rounded-xl bg-[var(--color-blue-10)] p-4">
+            <p className="text-base font-medium text-[var(--text-primary)] mb-1">AI Insight Summary</p>
+            <p className="text-base text-[var(--text-secondary)] italic">&ldquo;{lead.aiInsight}&rdquo;</p>
+          </section>
+        )}
 
-      <div className="flex gap-2 mt-4">
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            onEngage?.(lead.id)
-          }}
-          className="flex-1 px-3 py-2 bg-[var(--color-blue-90)] text-white text-base font-medium rounded hover:bg-[var(--color-blue-80)] transition-colors flex items-center justify-center gap-2"
-        >
-          Engage Lead
-          <ArrowRight className="h-4 w-4" />
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            onMoreDetails?.(lead.id)
-          }}
-          className="px-3 py-2 border border-[var(--border-subtle)] text-base font-medium rounded hover:bg-[var(--background-hover)] transition-colors flex items-center gap-2"
-        >
-          More Details
-          <ExternalLink className="h-4 w-4" />
-        </button>
+        {tagGroups.length > 0 && (
+          <section className="grid gap-3 md:grid-cols-2">
+            {tagGroups.map((group) => (
+              <div
+                key={group.id}
+                className="rounded-xl border border-[var(--border-subtle)] bg-white p-3 shadow-sm"
+              >
+                <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-blue-10)] text-[var(--color-blue-80)]">
+                    {renderTagIcon(group.icon)}
+                  </span>
+                  {group.label}
+                </div>
+                <ul className="mt-2 list-disc space-y-1 pl-6 text-sm text-[var(--text-secondary)]">
+                  {group.items.map((item, idx) => (
+                    <li key={`${group.id}-${idx}`}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+        )}
+
+        {similarWins && (
+          <section className="rounded-xl border border-[var(--color-blue-20)] bg-[var(--color-blue-10)]/60 p-4">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+                  <Sparkle className="h-4 w-4 text-[var(--color-blue-80)]" />
+                  Similar Wins
+                </div>
+                <p className="mt-1 text-sm text-[var(--text-secondary)]">{similarWins.summary}</p>
+              </div>
+              {similarWins.detail && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onViewSimilarWins?.(lead.id)
+                  }}
+                  className="inline-flex items-center gap-2 rounded border border-[var(--color-blue-40)] px-3 py-2 text-sm font-medium text-[var(--color-blue-90)] transition-colors hover:bg-[var(--color-blue-10)]"
+                >
+                  View Similar Wins
+                  <Link2 className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </section>
+        )}
+
+        <footer className="flex gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onEngage?.(lead.id)
+            }}
+            className="flex-1 inline-flex items-center justify-center gap-2 rounded bg-[var(--color-blue-90)] px-3 py-2 text-base font-medium text-white transition-colors hover:bg-[var(--color-blue-80)]"
+          >
+            <CtaIcon className="h-4 w-4" />
+            {ctaLabel}
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onMoreDetails?.(lead.id)
+            }}
+            className="inline-flex items-center gap-2 rounded border border-[var(--border-subtle)] px-3 py-2 text-base font-medium transition-colors hover:bg-[var(--background-hover)]"
+          >
+            More Details
+            <ExternalLink className="h-4 w-4" />
+          </button>
+        </footer>
       </div>
     </div>
   )
 }
+
 function ReadinessScorecard({
   signalFreshness,
+  signalTiming,
   aiConfidence,
   prepCompleteness,
 }: {
   signalFreshness: string
+  signalTiming?: SignalTiming
   aiConfidence: string
   prepCompleteness: string
 }) {
@@ -158,6 +251,9 @@ function ReadinessScorecard({
       icon: <Zap className="h-4 w-4 text-[var(--color-blue-80)]" />,
       label: 'Signal freshness',
       value: signalFreshness,
+      meta: signalTiming
+        ? [signalTiming.event, signalTiming.decayWarning].filter(Boolean)
+        : undefined,
     },
     {
       icon: <BrainCircuit className="h-4 w-4 text-[var(--color-blue-80)]" />,
@@ -172,20 +268,40 @@ function ReadinessScorecard({
   ]
 
   return (
-    <div className="rounded-xl border border-[var(--border-subtle)]/70 bg-[var(--color-blue-10)]/40 p-4 grid gap-3 md:grid-cols-3 mt-4">
+    <div className="mt-2 grid gap-3 rounded-xl border border-[var(--border-subtle)]/70 bg-[var(--color-blue-10)]/40 p-4 md:grid-cols-3">
       {items.map((item) => (
-        <div key={item.label} className="flex items-center gap-3">
-          <span className="rounded-full bg-white shadow-sm border border-[var(--border-subtle)]/50 p-2 flex items-center justify-center">
+        <div key={item.label} className="flex items-start gap-3">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-subtle)]/50 bg-white shadow-sm">
             {item.icon}
           </span>
           <div>
             <div className="text-xs uppercase tracking-wide text-[var(--text-secondary)]">{item.label}</div>
             <div className="text-sm font-semibold text-[var(--text-primary)]">{item.value}</div>
+            {item.meta?.map((meta, idx) => (
+              <div key={`${item.label}-meta-${idx}`} className="text-xs text-[var(--text-secondary)]">
+                {meta}
+              </div>
+            ))}
           </div>
         </div>
       ))}
     </div>
   )
+}
+
+function formatDriverDelta(delta: number) {
+  if (delta === 0) return '0'
+  return delta > 0 ? `+${delta}` : `${delta}`
+}
+
+function parseSignalTrail(signalTrail: string | null | undefined) {
+  if (!signalTrail) return []
+  try {
+    const parsed = JSON.parse(signalTrail)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
 }
 
 function computeSignalFreshness(updatedAt: Date | string | null) {
@@ -203,7 +319,7 @@ function computePrepCompleteness(lead: Lead) {
   const totalFactors = 3
   let score = 0
   if (lead.aiInsight) score += 1
-  if ((lead.signalTrail ? JSON.parse(lead.signalTrail) : []).length > 0) score += 1
+  if (parseSignalTrail(lead.signalTrail).length > 0) score += 1
   if (lead.notes && lead.notes.trim().length > 0) score += 1
 
   if (score === totalFactors) return 'Ready to engage'
@@ -211,46 +327,56 @@ function computePrepCompleteness(lead: Lead) {
   return 'Prep recommended'
 }
 
-function buildSimilarWins(lead: Lead) {
-  const industry = lead.industry || undefined
-  const sourceType = lead.sourceType || undefined
-
-  const tags: { id: string; label: string }[] = []
-
-  if (industry) {
-    const industryLabel = industryMappings[industry] || industry
-    tags.push({ id: `industry-${industry}`, label: `${industryLabel} win pattern` })
+function getSourceLabel(sourceType: string | null | undefined, fallbackSource?: string | null) {
+  if (!sourceType) return fallbackSource || 'Unknown'
+  const labels: Record<string, string> = {
+    TRIAL: 'Azure Trial',
+    WEBINAR: 'Signal Webinar',
+    CAMPAIGN_DOWNLOAD: 'Campaign Download',
+    SQL: 'SQL (Field referral)',
+    CAMPAIGN_EMAIL: 'Campaign Email',
   }
-
-  if (sourceType) {
-    const sourceLabel = sourceMappings[sourceType] || sourceType
-    tags.push({ id: `source-${sourceType}`, label: `${sourceLabel} conversions` })
-  }
-
-  if ((lead.signalTrail ? JSON.parse(lead.signalTrail) : []).some((signal: string) => /pricing|cost/i.test(signal))) {
-    tags.push({ id: 'pricing', label: 'Pricing objections handled' })
-  }
-
-  if (lead.aiInsight && /architecture|pilot/i.test(lead.aiInsight)) {
-    tags.push({ id: 'architecture', label: 'Architecture review converts' })
-  }
-
-  return tags.slice(0, 3)
+  return labels[sourceType] || sourceType
 }
 
-const industryMappings: Record<string, string> = {
-  RETAIL: 'Retail',
-  HEALTHCARE: 'Healthcare',
-  FINANCE: 'Finance',
-  EDUCATION: 'Education',
-  LOGISTICS: 'Logistics',
-  OTHER: 'Diversified',
+function getWorkReadyConfig(status: WorkReadyStatus) {
+  if (status === 'work-ready') {
+    return {
+      label: 'Work-Ready',
+      Icon: CheckCircle2,
+      classes: 'border-green-200 bg-green-50 text-green-700',
+    }
+  }
+
+  return {
+    label: 'Review First',
+    Icon: Clock3,
+    classes: 'border-amber-200 bg-amber-50 text-amber-700',
+  }
 }
 
-const sourceMappings: Record<string, string> = {
-  TRIAL: 'Trial accounts',
-  WEBINAR: 'Webinar follow-ups',
-  CAMPAIGN_DOWNLOAD: 'Campaign downloads',
-  SQL: 'SQL referrals',
-  CAMPAIGN_EMAIL: 'Campaign nurtures',
+function getCtaConfig(variant: CtaVariant) {
+  switch (variant) {
+    case 'top-pick':
+      return { label: 'Top Pick: Start Now', Icon: Medal }
+    case 'plan':
+      return { label: 'Plan Outreach', Icon: Compass }
+    default:
+      return { label: 'Engage Lead', Icon: Rocket }
+  }
+}
+
+function renderTagIcon(icon: TagGroup['icon']) {
+  const classes = 'h-4 w-4'
+  switch (icon) {
+    case 'behavior':
+      return <BrainCircuit className={classes} />
+    case 'signal':
+      return <Radar className={classes} />
+    case 'objection':
+      return <ShieldAlert className={classes} />
+    case 'pattern':
+    default:
+      return <Sparkle className={classes} />
+  }
 }

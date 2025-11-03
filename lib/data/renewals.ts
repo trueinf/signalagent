@@ -69,7 +69,7 @@ export const renewalAccounts: RenewalAccount[] = [
       'CFO wants proof of AI productivity gains before renewing $1.2M contract. Sponsor left in May; usage fell sharply.',
     usageTrend: {
       changePct: -28,
-      summary: 'Copilot usage down 28% in last 30 days after sponsor departure.',
+      summary: 'Signal usage down 28% in last 30 days after sponsor departure.',
       coverage: '42% of licenses active weekly',
     },
     signals: [
@@ -92,18 +92,18 @@ export const renewalAccounts: RenewalAccount[] = [
         'Hi team, let’s align on the productivity outcomes you expected versus what we’ve seen, then map the playbook to recover usage.',
       agenda: [
         'Review outcome metrics Finance is tracking',
-        'Walk through Copilot usage and productivity benchmarks',
+        'Walk through Signal usage and productivity benchmarks',
         'Propose adoption sprint and sponsorship plan',
       ],
       valueStory:
-        'Similar retail customers regained 30% productivity by pairing Copilot with the hybrid benefit pricing model—let’s map that to your workflows.',
+        'Similar retail customers regained 30% productivity by pairing Signal with the hybrid benefit pricing model—let’s map that to your workflows.',
       negotiation: 'Offer 5% loyalty incentive tied to adoption milestones and FastTrack-led refresh.',
       closing:
         'Schedule the architecture workshop early next week—Tuesday or Wednesday afternoon—to lock deployment and finalize the renewal.',
     },
     objectionHandling: [
       {
-        title: '“Copilot cost is too high for current usage.”',
+        title: '“Signal cost is too high for current usage.”',
         response:
           'Hybrid benefit scenario reduces net spend by 28% when we optimize license mix. Let’s review the finance-ready model from Contoso’s renewal.',
         asset: 'ROI calculator + finance one-pager',
@@ -126,7 +126,7 @@ export const renewalAccounts: RenewalAccount[] = [
     ],
     usageHighlights: [
       { label: 'Seats active', value: '420 / 1,000', trend: 'Down 11% MoM' },
-      { label: 'Copilot prompts/day', value: '6,200', trend: '-18% vs. target' },
+      { label: 'Signal prompts/day', value: '6,200', trend: '-18% vs. target' },
       { label: 'Support tickets', value: '4 open', trend: 'Need escalation' },
     ],
   },
@@ -138,7 +138,7 @@ export const renewalAccounts: RenewalAccount[] = [
     daysToRenewal: 49,
     riskLevel: 'medium',
     healthScore: 63,
-    primaryProduct: 'Microsoft 365 E5 + Copilot',
+    primaryProduct: 'Microsoft 365 E5 + Signal',
     region: 'EMEA',
     owner: 'Marisol Chen',
     lastTouchDays: 4,
@@ -146,8 +146,8 @@ export const renewalAccounts: RenewalAccount[] = [
       'Usage steady but procurement negotiating price decrease. Need executive story and roadmap to justify current rate.',
     usageTrend: {
       changePct: 6,
-      summary: 'Copilot adoption up 6% MoM after enablement sprint.',
-      coverage: '68% of Copilot seats active',
+      summary: 'Signal adoption up 6% MoM after enablement sprint.',
+      coverage: '68% of Signal seats active',
     },
     signals: [
       'Procurement requested 10% reduction',
@@ -165,9 +165,9 @@ export const renewalAccounts: RenewalAccount[] = [
       commercialOffer: 'Counter-proposal drafted',
     },
     talkTrack: {
-      opening: 'Thanks for inviting us to Tuesday’s review—let’s align on the impact Copilot has delivered and the roadmap ahead.',
+      opening: 'Thanks for inviting us to Tuesday’s review—let’s align on the impact Signal has delivered and the roadmap ahead.',
       agenda: ['Recap productivity metrics and security wins', 'Discuss licensing optimization', 'Agree on renewal timeline'],
-      valueStory: 'Finance processing time dropped 19% with Copilot; let’s show how the upcoming compliance features expand that impact.',
+      valueStory: 'Finance processing time dropped 19% with Signal; let’s show how the upcoming compliance features expand that impact.',
       negotiation: 'Offer service credits tied to new security modules instead of cash discount.',
       closing: 'Confirm renewal paperwork by June 25 so procurement can finalize terms.',
     },
@@ -178,9 +178,9 @@ export const renewalAccounts: RenewalAccount[] = [
         asset: 'Executive briefing deck',
       },
       {
-        title: '“Unsure if Copilot usage is widespread enough.”',
+        title: '“Unsure if Signal usage is widespread enough.”',
         response: 'Share the productivity KPI dashboard and highlight departments exceeding targets.',
-        asset: 'Copilot KPI dashboard',
+        asset: 'Signal KPI dashboard',
       },
     ],
     checklist: [
@@ -193,7 +193,7 @@ export const renewalAccounts: RenewalAccount[] = [
       { title: 'Contoso Finance renewal', takeaway: 'Executive CFO workshop sealed renewal at list price.' },
     ],
     usageHighlights: [
-      { label: 'Copilot adoption', value: '68%', trend: '+6% MoM' },
+      { label: 'Signal adoption', value: '68%', trend: '+6% MoM' },
       { label: 'Security incidents', value: '0 in 90 days', trend: 'Improved' },
       { label: 'Executive sessions', value: '2 completed', trend: 'On track' },
     ],
@@ -220,11 +220,11 @@ export const renewalAccounts: RenewalAccount[] = [
     signals: [
       'Business sponsor wants expansion plan',
       'Service desk satisfaction at 91%',
-      'Copilot in Dynamics pilot running in sales team',
+      'Signal in Dynamics pilot running in sales team',
     ],
     recommendedActions: [
       'Share cross-team success stories and quantify pipeline impact',
-      'Extend Copilot pilot to HQ, capture testimonial',
+      'Extend Signal pilot to HQ, capture testimonial',
       'Schedule adoption workshop for August leadership offsite',
     ],
     readiness: {
@@ -256,7 +256,7 @@ export const renewalAccounts: RenewalAccount[] = [
     ],
     usageHighlights: [
       { label: 'Power Platform apps built', value: '132', trend: '+12 QoQ' },
-      { label: 'Copilot pilot users', value: '85', trend: 'Expanding' },
+      { label: 'Signal pilot users', value: '85', trend: 'Expanding' },
       { label: 'Support CSAT', value: '91%', trend: '+4 pts' },
     ],
   },

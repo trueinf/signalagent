@@ -38,14 +38,14 @@ export interface ObjectionCluster {
 export const objectionClusters: ObjectionCluster[] = [
   {
     id: 'pricing-value',
-    title: '“Copilot is too expensive for current usage”',
+    title: '“Signal is too expensive for current usage”',
     severity: 'high',
     frequency: 86,
     changePct: 18,
     personas: ['CFO', 'Procurement'],
     motions: ['Leads', 'Renewals'],
     summary:
-      'Finance stakeholders question Copilot ROI when adoption is early or telemetry shows dips. They push for discounts before agreeing to next steps.',
+      'Finance stakeholders question Signal ROI when adoption is early or telemetry shows dips. They push for discounts before agreeing to next steps.',
     signals: [
       'Usage telemetry down 20% month over month',
       'Finance requests detailed ROI benchmarks',
@@ -61,7 +61,7 @@ export const objectionClusters: ObjectionCluster[] = [
       framing:
         'Reframe cost as a value exchange: productivity gains, hybrid benefit savings, and upcoming features that finance cares about.',
       proofPoints: [
-        'Contoso Manufacturing reduced forecast time by 30% and offset Copilot spend via hybrid benefit.',
+        'Contoso Manufacturing reduced forecast time by 30% and offset Signal spend via hybrid benefit.',
         'Service credits worth 5% accelerated adoption and preserved list pricing.',
       ],
       close:
@@ -196,7 +196,7 @@ export const objectionClusters: ObjectionCluster[] = [
       'Security teams need assurance about data handling, compliance, and remediation plans before moving forward.',
     signals: [
       'Recent security incident or audit pending',
-      'Customer lacks clarity on Copilot data boundaries',
+      'Customer lacks clarity on Signal data boundaries',
       'Compliance officer requesting additional documentation',
     ],
     recommendedActions: [
@@ -262,22 +262,22 @@ export const objectionClusters: ObjectionCluster[] = [
     personas: ['COO', 'Transformation Lead'],
     motions: ['Leads'],
     summary:
-      'Decision makers postpone Copilot because transformation roadmap is crowded. Need to re-anchor urgency and fit the project into existing initiatives.',
+      'Decision makers postpone Signal because transformation roadmap is crowded. Need to re-anchor urgency and fit the project into existing initiatives.',
     signals: [
       'Budget reallocated to other initiatives',
       'Sponsor bandwidth limited',
       'Leadership wants proof of quick wins',
     ],
     recommendedActions: [
-      'Connect Copilot to active initiatives (e.g., cost reduction, productivity OKRs)',
+      'Connect Signal to active initiatives (e.g., cost reduction, productivity OKRs)',
       'Propose scoped pilot aligned to those objectives',
       'Secure executive sponsor by highlighting similar success stories',
     ],
     playbook: {
       opener: 'Acknowledge competing priorities; ask which initiatives are top of mind.',
-      framing: 'Demonstrate how Copilot accelerates the existing roadmap rather than adds new work.',
+      framing: 'Demonstrate how Signal accelerates the existing roadmap rather than adds new work.',
       proofPoints: [
-        'Tailwind Traders embedded Copilot in customer support, delivering 19% faster resolution within current program.',
+        'Tailwind Traders embedded Signal in customer support, delivering 19% faster resolution within current program.',
         'Executive sponsor saw measurable value in 30-day scoped pilot tied to OKRs.',
       ],
       close: 'Propose a 30-day pilot with clear checkpoints and minimal lift, then revisit broader rollout.',
@@ -287,7 +287,7 @@ export const objectionClusters: ObjectionCluster[] = [
       {
         customer: 'Tailwind Traders',
         takeaway: 'Scoped pilot kept program on track and unlocked full deployment.',
-        details: 'Rep reframed Copilot as part of an existing support initiative, ran a 30-day pilot with clear metrics, and leadership approved expansion afterwards.',
+        details: 'Rep reframed Signal as part of an existing support initiative, ran a 30-day pilot with clear metrics, and leadership approved expansion afterwards.',
       },
     ],
     metrics: {
@@ -311,11 +311,11 @@ export const objectionClusters: ObjectionCluster[] = [
       {
         id: 'share-success',
         label: 'Share success story',
-        description: 'Send curated case study aligning Copilot with current priority.',
+        description: 'Send curated case study aligning Signal with current priority.',
         href: `/objection-tree/competing-priority/actions/success`,
       },
     ],
-    learningPrompts: ['Which initiative outranks Copilot?', 'Who can become executive sponsor?', 'What is the near-term win?'],
+    learningPrompts: ['Which initiative outranks Signal?', 'Who can become executive sponsor?', 'What is the near-term win?'],
   },
 ]
 

@@ -131,11 +131,11 @@ function buildCaseStudies({
   return [
     {
       id: 'case-1',
-      title: 'Contoso Retail transforms store operations with Azure Copilot',
+      title: 'Contoso Retail transforms store operations with Azure Signal',
       industry: 'Retail',
       location: 'North America',
       summary:
-        'Contoso unified merchandising and finance workflows across 240 stores, using Copilot to automate forecasting and cost planning within Dynamics 365.',
+        'Contoso unified merchandising and finance workflows across 240 stores, using Signal to automate forecasting and cost planning within Dynamics 365.',
       relevance: `Great companion story for ${companyName}: similar ${industryDescriptor} organization accelerated time-to-insight by 28%.`,
       highlights: [
         'Automated cost benchmarking reduced quarterly planning cycles from four weeks to five days.',
@@ -145,18 +145,18 @@ function buildCaseStudies({
     },
     {
       id: 'case-2',
-      title: 'Northwind Traders pilots Copilot with Lean Engineering',
+      title: 'Northwind Traders pilots Signal with Lean Engineering',
       industry: 'Manufacturing',
       location: 'Europe',
       summary:
-        'Northwind deployed Azure Copilot for supply chain planning with a five-person engineering crew, leveraging FastTrack to stay within resource limits.',
+        'Northwind deployed Azure Signal for supply chain planning with a five-person engineering crew, leveraging FastTrack to stay within resource limits.',
       relevance:
         'Use this when “limited engineering bandwidth” surfaces—the customer delivered production value in three weeks with Microsoft FastTrack support.',
       highlights: [
         'FastTrack-led deployment freed internal engineers to focus on critical integrations.',
         'Stakeholder alignment achieved via a 30-minute architecture review, matching the proposed next step for your call.',
       ],
-      callToAction: 'Position FastTrack as the safety net so the team can adopt Copilot without adding headcount.',
+      callToAction: 'Position FastTrack as the safety net so the team can adopt Signal without adding headcount.',
     },
     {
       id: 'case-3',
@@ -164,7 +164,7 @@ function buildCaseStudies({
       industry: 'Financial Services',
       location: 'Asia Pacific',
       summary:
-        'Fabrikam’s CFO approved a Copilot rollout after validating hybrid benefit savings and productivity lift in the first 60 days.',
+        'Fabrikam’s CFO approved a Signal rollout after validating hybrid benefit savings and productivity lift in the first 60 days.',
       relevance: `Ideal when the ${buyerDescriptor} presses on cost. Mirrors the ROI conversation sparked by the pricing export ${source.toLowerCase()} delivered.`,
       highlights: [
         'Hybrid benefit calculator identified a 32% cost reduction versus legacy tooling.',
@@ -174,13 +174,13 @@ function buildCaseStudies({
     },
     {
       id: 'case-4',
-      title: 'Adventure Works scales customer agents with Copilot playbooks',
+      title: 'Adventure Works scales customer agents with Signal playbooks',
       industry: 'Customer Service',
       location: 'Latin America',
       summary:
-        'Adventure Works used Copilot-guided workflows to boost first-call resolution by 19% across distributed contact centers.',
+        'Adventure Works used Signal-guided workflows to boost first-call resolution by 19% across distributed contact centers.',
       relevance:
-        'Highlights Copilot assisting frontline teams—useful if the conversation touches customer or support teams adjacent to your champion.',
+        'Highlights Signal assisting frontline teams—useful if the conversation touches customer or support teams adjacent to your champion.',
       highlights: [
         'Playbook automation shortened onboarding timelines by 40%.',
         'Telemetry insights informed weekly stand-ups to refine messaging and objection handling.',
@@ -193,7 +193,7 @@ function buildCaseStudies({
       industry: 'Technology',
       location: 'Global',
       summary:
-        'Tailwind converted webinar leads into active Copilot pilots by following a 14-day engagement sequence with targeted messaging.',
+        'Tailwind converted webinar leads into active Signal pilots by following a 14-day engagement sequence with targeted messaging.',
       relevance: `Perfect for this opportunity sourced from ${source}. Reinforces that webinar engagement can close rapidly with the right follow-up cadence.`,
       highlights: [
         'AI-personalised nurture sequence delivered 36% click-through on technical deep dives.',

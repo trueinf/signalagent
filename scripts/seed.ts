@@ -25,13 +25,13 @@ async function main() {
       email: 'ravi.kumar@medisoft.com',
       company: 'Medisoft Diagnostics',
       contactTitle: 'IT Admin',
-      source: 'Downloaded "Copilot for Healthcare" guide',
+      source: 'Downloaded "Signal for Healthcare" guide',
       sourceType: SourceType.CAMPAIGN_DOWNLOAD,
       industry: Industry.HEALTHCARE,
       buyerRole: BuyerRole.IT_ADMIN,
       intentScore: 76,
       signalTrail: JSON.stringify([
-        'Attended 46 minutes of Copilot webinar, no form filled',
+        'Attended 46 minutes of Signal webinar, no form filled',
       ]),
       aiInsight: 'Passive interest from IT buyer. Suggest email first, then assess intent.',
     },
@@ -102,4 +102,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect()
   })
-
